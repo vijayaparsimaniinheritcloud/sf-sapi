@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_898da3cb_b588_42a7_8cf4_cb5c0a214312_Output_Payload = Array<{  billing_street: String,   accountid: String,   billing_city: String,   billing_postalcode: String,   billing_state: String,   billing_country: String,   description: String,   id: String,   status: String,   _?: Any}>
+

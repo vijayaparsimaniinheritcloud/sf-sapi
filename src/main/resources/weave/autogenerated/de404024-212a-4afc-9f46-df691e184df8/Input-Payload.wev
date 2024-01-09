@@ -1,0 +1,15 @@
+%dw 2.0
+
+type auto_de404024_212a_4afc_9f46_df691e184df8_Input_Payload = {
+  billing_street: String, 
+  accountid: String, 
+  billing_city: String, 
+  billing_postalcode: String, 
+  billing_state: String, 
+  billing_country: String, 
+  description: String, 
+  contract_term: Number, 
+  status: String, 
+  _?: Any
+}
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="postcontractsimplementationFlow" doc:id="1246cd06-811c-4570-babe-b3158e9f90e4" >
+		<logger level="INFO" doc:name="strart Logger" doc:id="baa366a2-089c-4933-955f-ef5b12df5e06" message="post-contracts-implementation flow-started"/>
+		<ee:transform doc:name="post-Request-Transform Message" doc:id="aec5fff6-1324-46ad-81f2-62b63d8c6e37" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/postRequest.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:create doc:name="Create-Contract-in-sf" doc:id="2179ac97-24a7-4654-a4b1-4cde4fd3980d" config-ref="Salesforce_Config" type="Contract"/>
+		<ee:transform doc:name="set -Response" doc:id="b788aeba-12be-45a0-a0f3-0399076d7ea1" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/postResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="f7c440e7-ef87-40f9-b998-0b08bb522c94" message="post-contracts-implementation flow-compleated"/>
+	</flow>
+	<flow name="getAll-Contracts-implementationFlow" doc:id="898da3cb-b588-42a7-8cf4-cb5c0a214312" >
+		<logger level="INFO" doc:name="start Logger" doc:id="8d750720-56b0-4d56-9380-28aafe5e8a88" message="getAll-Contracts-implementationFlow-started"/>
+		<salesforce:query doc:name="get-All-Contracts-from-sf" doc:id="c627df6c-460f-41ab-a185-f11ffbd2930f" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Id,BillingPostalCode,BillingCity,BillingState,BillingCountry,BillingStreet,Description,Status FROM Contract]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="set-Response" doc:id="cd6d8a0f-ed41-4a75-b764-84d6001d8747" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/getAllContractsResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="fc26234a-47e2-417c-87f2-6419447a9401" message="getAll-Contracts-implementationFlow-compleated"/>
+	</flow>
+	<flow name="get-By-Id-implementationFlow" doc:id="107c5df4-295e-4122-9fa2-800ee89e57ac" >
+		<logger level="INFO" doc:name="start Logger" doc:id="4299651c-a1ed-412b-94e4-969cb5c34abc" message="get-By-Id-implementationFlow-started"/>
+		<set-variable value="#[attributes.uriParams.'id']" doc:name="set-id" doc:id="3d5a1c32-9d0f-4bfe-a1ba-84db6785b020" variableName="id"/>
+		<salesforce:query doc:name="get-By-Id-from-sf" doc:id="3e254456-9d66-41d1-97c0-a65eac6d11e5" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Id,BillingPostalCode,BillingCity,BillingState,BillingCountry,BillingStreet,Description,Status FROM Contract WHERE Id= ':id']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"id" : vars.id
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<choice doc:name="Choice" doc:id="de87c044-620e-474d-85de-376d61d53424" >
+			<when expression="#[isEmpty(payload)]">
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  is_success: false,&#10;  errors: [{&#10; 	"error_message": "No record found with This particular Id To Get Details"&#10;  }]&#10;}]' doc:name="Set Payload" doc:id="8a9a9696-3e91-47ff-8f5d-7c8dc8811a09" />
+			</when>
+			<otherwise >
+				<ee:transform doc:name="set-Response" doc:id="5ae5ee16-62d1-4646-a2c8-42f479c78c45">
+			<ee:message>
+						<ee:set-payload resource="dwlScripts/getByIdContractResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="end Logger" doc:id="7f71eb6f-e662-424b-a89e-08bc1cfaeeb3" message="get-By-Id-implementationFlow-compleated"/>
+	</flow>
+	<flow name="put_By-Id-implementationFlow" doc:id="de404024-212a-4afc-9f46-df691e184df8" >
+		<logger level="INFO" doc:name="start Logger" doc:id="e278aa39-3a57-4406-84b1-d0d02c4393a1" message="put_By-Id-implementationFlow-started"/>
+		<ee:transform doc:name="update-Request" doc:id="1d5bbd3c-2a3a-47f5-aeb0-ed829e54b9ec" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/updateRequest.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:update type="Contract" doc:name="Update-By-Id-in-sf" doc:id="62910f21-346c-4727-8883-a087da8122b3" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="set-Response" doc:id="0d45df3f-9d7a-448d-b682-44270389225f" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/updateResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="b2f3f0d4-be87-41aa-81a6-45e2151f4d21" message="put_By-Id-implementationFlow-compleated"/>
+	</flow>
+	<flow name="delete-By-id-implementationFlow" doc:id="bcb99373-a313-43d8-bd67-6765e5ea221a" >
+		<logger level="INFO" doc:name="start Logger" doc:id="b4c2d706-103f-4f57-86b0-429ad5bd4f2d" message="delete-By-id-implementationFlow-started"/>
+		<ee:transform doc:name="set-id" doc:id="fc5a666c-493e-44c5-b6a9-549bfcf92086" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/deleteRequest.dwl" />
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<salesforce:delete doc:name="Delete-By-Id -in -sf" doc:id="13d663ae-66f6-4641-9df1-a9813a88742b" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="set-Response" doc:id="b55d90ee-bf7e-4a64-b066-215b587c371b" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts/deleteResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="65410621-b463-44b2-b61f-14673e32c3bb" message="delete-By-id-implementationFlow-compleated"/>
+	</flow>
+</mule>
