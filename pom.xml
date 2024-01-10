@@ -40,11 +40,6 @@
       <region>us-east-1</region>
       <workers>1</workers>
       <workerType>MICRO</workerType>
-      <properties>
-	      <anypoint.platform.config.analytics.agent.enabled>false</anypoint.platform.config.analytics.agent.enabled>
-        <anypoint.platform.client_id>44f0e11878524958bd0e487b9c178289</anypoint.platform.client_id>
-	      <anypoint.platform.client_secret>d6D695cbCDd640b49F1bC36e529Ff293</anypoint.platform.client_secret>
-      </properties>
     </cloudHubDeployment>
 				</configuration>
 		</plugin>
