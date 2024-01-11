@@ -29,6 +29,18 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<armDeployment>
+						<muleVersion>4.4.0</muleVersion>
+						<uri>https://anypoint.mulesoft.com</uri>
+                         <target>server</target>
+                         <applicationName>ic-sfdc-vijaya</applicationName>
+						<targetType>server</targetType>
+                        <username>vijayalakshmi_28122023</username>
+                        <password>Prasad@333</password>
+						<environment>Sandbox</environment>
+				   </armDeployment>
+		        </configuration>
 			</plugin>
 		</plugins>
 	</build>
